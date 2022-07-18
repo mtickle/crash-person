@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -73,6 +74,7 @@ func main() {
 	//-----------------------------------------------------------------------
 	//--- Load data from the API
 	var ApiURL = "https://utility.arcgis.com/usrsvcs/servers/35922646263e4769b171317965815ec8/rest/services/Crash_Reports/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+	//var ApiURL = "https://utility.arcgis.com/usrsvcs/servers/35922646263e4769b171317965815ec8/rest/services/Crash_Reports/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=json"
 	resp, err := http.Get(ApiURL)
 	if err != nil {
 		fmt.Println("No response from request")
@@ -132,9 +134,12 @@ func main() {
 		var ContributingCircumstance2 = rec.Attributes.ContributingCircumstance2
 		var ContributingCircumstance3 = rec.Attributes.ContributingCircumstance3
 		var VehicleType = rec.Attributes.VehicleType
-		var CrashDate = rec.Attributes.CrashDate
+		var CrashDateMilli = rec.Attributes.CrashDate
 
-		var sql = "CALL add_crash ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26);"
+		CrashDate := time.UnixMilli(CrashDateMilli)
+		fmt.Println(CrashDate)
+
+		var sql = "CALL add_crash_person ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26);"
 
 		_, err := db.Exec(sql,
 			KeyCrash,
